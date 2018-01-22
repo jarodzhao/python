@@ -7,3 +7,4 @@ for(key, record) in [('jarod', jarod), ('bing', bing)]:
 	recfile = open(key + '.pkl', 'wb')
 	pickle.dump(record, recfile)
 	recfile.close()
+
