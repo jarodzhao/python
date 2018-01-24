@@ -2,12 +2,12 @@ from dev import jarod, bing
 
 import shelve
 
-#使用 shelve 将对象保存到文件
-# db = shelve.open('people-shelve')
-# db['jarod'] = jarod
-# db['bing'] = bing
-# db.close()
-
+def make_db_shelve():
+	'使用 shelve 将对象保存到文件'
+	db = shelve.open('people-shelve')
+	db['jarod'] = jarod
+	db['bing'] = bing
+	db.close()
 
 #使用 shelve 还原文件中的对象
 def dump_db_shelve():
@@ -16,16 +16,21 @@ def dump_db_shelve():
 		print(key, '=>\n', db[key])
 	db.close()
 
-
 #更新对象，使用 shelve
 def update_db_shelve():
 	db = shelve.open('people-shelve')
-	jarod = db['jarod'] #还原对象
-	jarod['age'] -= 10	#更新内存中的对象
-	db['jarod'] = jarod #更新数据库中的对象
+
+	jarod = db['jarod'] 	#还原对象
+	jarod['pay'] += 15000	#更新内存中的对象
+	db['jarod'] = jarod 	#更新数据库中的对象
+
+	bing = db['bing']
+	bing['pay'] -= 50000
+	db['bing'] = bing
 	db.close()
 
 #模块启动方式打开时执行
 if __name__ == '__main__':
-	update_db_shelve()
+	# update_db_shelve()
 	dump_db_shelve()
+	# make_db_shelve()

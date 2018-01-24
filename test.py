@@ -1,9 +1,16 @@
-from dev import jarod, bing
+import shelve
 
-import pickle
+def ins():
+	tt = shelve.open('test')
+	tt['a'] = 'aaa'
+	tt['b'] = 'bbb'
+	tt.close()
 
-# 将对象的字节流写入文件
-for(key, record) in [('jarod', jarod), ('bing', bing)]:
-	recfile = open(key + '.pkl', 'wb')
-	pickle.dump(record, recfile)
-	recfile.close()
+def lod():
+	tt = shelve.open('test')
+	print(tt)
+	print(tt['b'])
+	tt.close()
+
+
+lod()
