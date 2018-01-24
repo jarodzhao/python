@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import shelve
 
 def ins():
@@ -14,3 +15,15 @@ def lod():
 
 
 lod()
+=======
+import os, sys
+from http.server import HTTPServer, CGIHTTPRequestHandler
+
+webdir = '.'
+port = 80
+
+os.chdir(webdir)
+srvraddr = ('', port)
+srvrobj = HTTPServer(srvraddr, CGIHTTPRequestHandler)
+srvrobj.serve_forever()
+>>>>>>> 7285b261a8d8b20f0acde41160b8054df7f42a8a
