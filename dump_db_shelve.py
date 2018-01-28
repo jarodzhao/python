@@ -13,7 +13,7 @@ def make_db_shelve():
 def dump_db_shelve():
 	db = shelve.open('people-shelve')
 	for key in db:
-		print(key, '=>\n', db[key])
+		print(key, '=><br/>', db[key])
 	db.close()
 
 #更新：使用 shelve 更新对象
