@@ -2,21 +2,21 @@ from dev import jarod, bing
 
 import shelve
 
+#保存：使用 shelve 将对象保存到文件'
 def make_db_shelve():
-	'使用 shelve 将对象保存到文件'
 	db = shelve.open('people-shelve')
 	db['jarod'] = jarod
 	db['bing'] = bing
 	db.close()
 
-#使用 shelve 还原文件中的对象
+#还原：使用 shelve 还原文件中的对象
 def dump_db_shelve():
 	db = shelve.open('people-shelve')
 	for key in db:
 		print(key, '=>\n', db[key])
 	db.close()
 
-#更新对象，使用 shelve
+#更新：使用 shelve 更新对象
 def update_db_shelve():
 	db = shelve.open('people-shelve')
 
