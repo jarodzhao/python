@@ -1,0 +1,214 @@
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<title>河南省人民检察院检务通</title>
+
+
+
+
+
+<base href="/" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<!-- basic styles -->
+<link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css" />
+
+<!-- ace styles -->
+<link rel="stylesheet" href="/static/assets/css/ace.min.css" />
+<link rel="stylesheet" href="/static/css/valley.css" />
+<link rel="stylesheet" href="/static/uploadify/uploadify.css" />
+
+<!-- inline styles related to this page -->
+<link rel="stylesheet" href="/static/iconfont/iconfont.css" />
+
+<link rel="stylesheet" href="/static/jquery/jquery.searchableSelect.css" />
+
+<!-- ace settings handler -->
+
+
+<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+
+<!--[if lt IE 9]>
+		<script src="assets/js/html5shiv.js"></script>
+		<script src="assets/js/respond.min.js"></script>
+		<![endif]-->
+
+
+<!-- basic scripts -->
+<script src="/static/jquery/jquery.js"></script>
+<script src="/static/jquery/jquery-form.js"></script>
+<!-- validate -->
+<script src="/static/jquery/jquery.validate.min.js"></script>
+<script src="/static/jquery/jquery.validate.messages.zh-CN.js"></script>
+
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/jqueryui/jquery-ui.js"></script>
+<script src="/static/jqueryui/dialog.js"></script>
+<script src="/jsp/modelform/formutil/browserType.js"></script>
+<script src="/static/js/common.js"></script>
+<!-- upload extrend -->
+<script src="/static/ajaxfileupload/ajaxfileupload.js"></script>
+<!-- uploadify -->
+<script src="/static/uploadify/jquery.uploadify.min.js"></script>
+<script src="/static/uploadify/swfobject.js"></script>
+<script src="/static/uploadify/uploadifyutil.js"></script>
+<script src="/static/uploadify/netuploadifyutil.js"></script>
+<!-- page specific plugin scripts -->
+
+<!-- ace scripts -->
+
+<!-- inline scripts related to this page -->
+<script src="/static/js/valley-platform.js"></script>
+
+<!-- bootstrap-table css and js -->
+<link href="/static/bootstrap-table/bootstrap-table.css" rel="stylesheet" media="screen">
+<script type="text/javascript" src="/static/bootstrap-table/bootstrap-table.js" charset="UTF-8"></script>
+<script type="text/javascript" src="/static/bootstrap-table/locale/bootstrap-table-zh-CN.js" charset="UTF-8"></script>
+<script type="text/javascript" src="/static/bootstrap-table/extensions/export/bootstrap-table-export.js" charset="UTF-8"></script>
+<script type="text/javascript" src="/static/bootstrap-table/extensions/export/tableExport.js" charset="UTF-8"></script>
+<script type="text/javascript" src="/static/bootstrap-table/extensions/toolbar/bootstrap-table-toolbar.js" charset="UTF-8"></script>
+<script type="text/javascript" src="/static/blockui/jquery.blockUI.min.js"></script>
+
+<script type="text/javascript" src="/static/jquery/jquery.searchableSelect.js"></script>
+
+
+<script>
+$(document).ready(function(){
+	if(window.top!=window){
+		window.top.location.href='sysadmin/login';
+	}
+	$("input[name='username']").focus();
+	
+	
+	var smsLogin = $('#smsLogin').val();
+	if(smsLogin){
+		if(smsLogin == 'false'){
+			$('#sel').val('0');
+			$('#vc').css('display','none');
+			$('#pw').css('display','block');
+		}else{
+			$('#sel').val('1');
+			$('#vc').css('display','block');
+			$('#pw').css('display','none');
+		}
+	}else{
+		$('#sel').val('0');
+		$('#vc').css('display','none');
+		$('#pw').css('display','block');
+	}
+	
+	var wait=60;
+	document.getElementById("btn").disabled=false;   
+	function time(o) {
+        if (wait == 0) {
+            o.removeAttribute("disabled");           
+            o.value="获取手机验证码";
+            wait = 60;
+            clear();
+        } else {
+        	if(!o.disabled){
+        		send($('input[name="username"]').val());
+        	}
+            o.setAttribute("disabled", true);
+            o.value="重新发送(" + wait + ")";
+            wait--;
+            setTimeout(function() {
+                time(o)
+            },
+            1000);
+            
+        }
+    }
+	document.getElementById("btn").onclick=function(){time(this);}
+});
+function showField(){
+	var sel=$('#sel').val();
+	if(sel=='1'){
+		$('#pw').css('display','none');
+		$('#vc').css('display','block');
+	}else{
+		$('#vc').val('');
+		$('#pw').css('display','block');
+		$('#vc').css('display','none');
+	}
+}
+function send(username){
+	$.ajax({
+		type : 'post',
+		url : 'login/getCode',
+		data:{username:username},
+		success:function(result){
+			alert(result.msg);
+		}
+	})
+}
+function clear(){
+	$.ajax({
+		type : 'post',
+		url : 'login/clear',
+		success:function(result){}
+	})
+}
+</script>
+
+</head>
+
+<body class="login-layout">
+  <div class="login-container">
+       <div class="login-logo">
+			<img src="static/images/logo.png" alt="河南省人民检察院检务通" />
+       </div>
+       
+            <div class="login-box">
+    		<div class="login-box-tit"></div>
+    
+                    <form class="form-horizontal" action="" method="post">
+                    <input type="hidden" name="token" value="d03a363a5ba441988aca7f3fce655b03"/>
+                    <input type="hidden" id="smsLogin" value="false"/>
+                        <fieldset>
+                        	<input name="loginType" id="sel" value="" type="hidden">
+                            <div class="form-group">
+                                <font>用户名</font>
+                                <input type="text" autofocus name="username">
+                            </div>
+                            
+    						<div id="pw">
+	                             <div class="form-group">
+                                	<font>密&nbsp;&nbsp;码</font>
+	                                    <input type="password" name="password">
+	                            </div>
+    						</div>
+    					<!-- 	<div id="vc" style="display:none">
+    							<div class="form-group">
+    								<i class="glyphicon glyphicon-set"></i>
+                               		<input type="text" name="validateCode" placeholder="请输入验证码" class="form-control">
+    								<input type="button" id="btn" value="获取手机验证码" />
+    							</div>
+    						</div> -->
+    						<div id="vc" style="display:none">
+    							<div class="form-inline">
+	    							<div class="form-group"> 
+		    							<i class="glyphicon glyphicon-lock"></i>
+		                               	<input type="text" name="validateCode" placeholder="请输入验证码" class="form-control" />  
+	    							</div>
+	    							<input type="button" id="btn" class="btn btn-info btn-lg  pull-right" value="获取手机验证码" />
+	    						</div>
+    						</div>
+                            <div class="form-btn form-group">
+                                <button class="btn" type="submit" ></button>
+                            </div>
+    
+                            <div class="space-4"></div>
+                        </fieldset>
+                    </form>
+        </div>
+    </div>
+</body>
+</html>
+

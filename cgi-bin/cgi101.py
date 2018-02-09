@@ -13,6 +13,9 @@ print('Content-type: text/html\n')
 import json, shelve
 db = shelve.open('people-shelve')
 jarod = db['jarod']
+bing = db['bing']
 jarod_json = json.dumps(jarod)
 print(jarod_json)
+print('<br />')
+print(bing)
 db.close()
