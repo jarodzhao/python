@@ -1,13 +1,5 @@
-from urllib import request
+import time
 
-url = 'http://125.46.33.20:8011/sysadmin'
-
-response = request.urlopen(url)
-html = response.read()
-
-fp = open('sysadmin.html', 'w+b')
-fp.write(html)
-fp.close()
-
-# help(response)
-print(response.geturl())
+for i in range(1, 10):
+    time.sleep(1)
+    print(time.localtime())
