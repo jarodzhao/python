@@ -19,6 +19,7 @@ def loadItem():
 	sql = 'select * from my'
 	cursor = conn.execute(sql)
 
+	#循环读取记录集
 	for row in cursor:
 		print(row, end='00\n')
 
