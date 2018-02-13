@@ -2,6 +2,7 @@ import sqlite3
 
 '''创建数据库并写入测试数据'''
 def createDB():
+	conn = sqlite3.connect('hello.db')
 	cursor = conn.execute('create table if not exists my (id int, name text, mobile text)')
 
 	for i in range(1, 101):
@@ -14,6 +15,7 @@ def createDB():
 
 '''读取数据库中的所有记录'''
 def loadItem():
+	conn = sqlite3.connect('hello.db')
 	sql = 'select * from my'
 	cursor = conn.execute(sql)
 
@@ -21,6 +23,5 @@ def loadItem():
 		print(row, end='00\n')
 
 if __name__ == '__main__':
-	conn = sqlite3.connect('hello.db')
 	# createDB()
 	loadItem()
