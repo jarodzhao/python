@@ -23,9 +23,11 @@ class Movie:
 def getSoup(url):
     r = requests.get(url)
     r.encoding = 'gb18030'
+    print(r.text)
     return bsp(r.text, "html.parser")
 
 
+#处理传入的 url 地址
 def filterMovie(url):
     resultList = []
     soup = getSoup(url)
@@ -41,9 +43,9 @@ def filterMovie(url):
                     if(score > 8):
                         name = nameA.text
                         url = site + nameA['href']
-                        print('url:', url)
-                        print('title:', name)
-                        print('score:', score)
+                        # print('url:', url)
+                        # print('title:', name)
+                        # print('score:', score)
                         downloadLink = getDownloadLink(url)
                         movie = Movie(name, url, score, downloadLink)
                         resultList.append(movie)
@@ -75,14 +77,15 @@ def saveInfo(movieList):
             exit()
     fileObj.close()
 
-
+#传入url地址，然后分析
 def getPageResource(url):
     resultList = filterMovie(url)
     if len(resultList) > 0:
         saveInfo(resultList)
 
+#主程序运行#
 if __name__ == '__main__':
-    for index in range(156):
+    for index in range(1):
         index += 1
         url = 'http://www.ygdy8.net/html/gndy/oumei/list_7_' + \
             str(index) + '.html'
