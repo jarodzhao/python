@@ -6,16 +6,16 @@ site = 'http://www.ygdy8.net'
 lineNo = 1
 
 
-class Movie:
+class Item:
 
-    def __init__(self, name, url, score, link):
+    def __init__(self, name, url, img, price):
         self.name = name
         self.url = url
-        self.score = score
-        self.link = link
+        self.img = img
+        self.price = link
 
     def __str__(self):
-        return '%s,\t%s分,\t%s' % (self.name, self.score, self.link)
+        return '%s,\t%s,\t%s' % (self.img, self.name, self.price)
 
     __repr__ = __str__
 
@@ -31,7 +31,9 @@ def getSoup(url):
 def filterMovie(url):
     resultList = []
     soup = getSoup(url)
+
     tables = soup.find_all('table', class_='tbspan')
+    
     for table in tables:
         nameA = table.find('a', text=re.compile("《"))
         td = table.find('td', text=re.compile("IMD"))
@@ -83,10 +85,10 @@ def getPageResource(url):
     if len(resultList) > 0:
         saveInfo(resultList)
 
+
 #主程序运行#
 if __name__ == '__main__':
-    for index in range(1):
+    for index in range(5):
         index += 1
-        url = 'http://www.ygdy8.net/html/gndy/oumei/list_7_' + \
-            str(index) + '.html'
+        url = 'https://faxian.smzdm.com/p' + str(index)
         getPageResource(url)
