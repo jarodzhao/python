@@ -53,7 +53,7 @@ def saveData(p):
         inDB(item) #入库
         print('%s\n%s %s %s\n%s' % (item.title, item.store, item.price, item.time_, item.url), 
             end='\n\n')
-    print('*******************************************************************************************')
+    print('*****************************************第 %s 页**************************************************', (p,))
 
 '''插入对象到数据上'''
 def inDB(item):
@@ -70,7 +70,7 @@ def inDB(item):
     conn.close()
 
 if __name__ == '__main__':
-    for i in range(100):
+    for i in range(5):
         i += 1
         saveData(i)
         time.sleep(5)
