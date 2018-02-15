@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup as bsp
+import time
 
 class Item:
 	def __init__(self, day, title, content, url, readcount, comment):
@@ -43,4 +44,8 @@ for i in range(7):
 		print('%s %s %s %s' % (lineNo, item.title, item.url, item.day))
 		# print(day)
 
+		#写入到文件
+		
+
 	print('****************************** 第 %s 页 *************************************' % (i))
+	time.sleep(5)
