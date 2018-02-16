@@ -1,0 +1,40 @@
+<li timesort="1518762522" articleid="5_8725724">
+        <div class="feed-block-ver">
+            <div class="feed-ver-pic">
+                <span class="tag-top-left haitao">海淘精选</span>
+                <a href="https://www.smzdm.com/p/8725724/" target="_blank"><img src="https://qny.smzdm.com/201801/25/5a69a427b1bb6595.jpg_d200.jpg" width="200px" height="200px" style="margin-top:0px" alt="Lily charmed 同根生 925纯银 项链"></a>
+                <a href="https://www.smzdm.com/mall/bonpont/" target="_blank" class="tag-bottom-right" _hover-ignore="1">Bonpont国际商城</a>
+            </div>
+            <h5 class="feed-ver-title" _hover-ignore="1"><a href="https://www.smzdm.com/p/8725724/" target="_blank">Lily charmed 同根生 925纯银 项链</a></h5>
+            <div class="z-highlight z-ellipsis">219元包税包直邮</div>
+            <div class="feed-ver-row">
+                <div class="feed-ver-row-l">
+                    
+                    <span class="z-avatar-group z-avatar-name">Bonpont国际商城</span>
+                </div>
+                            <div class="feed-ver-row-r feed-ver-date">14:28</div>
+                        </div>
+                        <div class="feed-ver-descripe"><strong>纯银材质，独特造型，含税包直邮。</strong>Lily Charmed是来自英国的品牌，在2011年由堂兄弟马库斯·皮尔斯和Lucy ...</div>
+                        <div class="feed-ver-row">
+                            <div class="feed-ver-row-l">
+                <span class="z-group-data"><a href="javascript:;" class="J_zhi_like_fav" data-type="zhi" data-zhi-type="1" data-channel="3" data-article="8725724"><span class="unvoted-wrap"><i class="z-icon-zhi"></i><span>0</span></span></a></span>
+                                <a href="https://www.smzdm.com/p/8725724/#comments" target="_blank" class="z-group-data"><i class="z-icon-comment"></i>2</a>
+                            </div>
+                            <div class="feed-ver-row-r">
+                    <div class="feed-link-btn">
+                        <div class="feed-link-btn-inner">
+                            <a href="https://go.smzdm.com/17b657c76b36b4d2/ca_aa_ht_131_8725724_922_37127_145" onclick="gtmAddToCart({'name':'Lily charmed 同根生 925纯银 项链','id':'8725724' , 'price':'219','brand':'Lily charmed' ,'mall':'Bonpont国际商城', 'category':'礼品钟表/珠宝首饰/项链/无','metric1':'219','dimension10':'bonpont.com','dimension9':'haitao','dimension11':'5阶价格','dimension12':'Bonpont国际商城','dimension20':'无','dimension32':'无','dimension25':'922'})" target="_blank" rel="nofollow" class="z-btn z-btn-red">
+                                去购买<i class="z-icon-arrow-right"></i>
+                            </a>
+                                    </div>
+                                </div>
+
+                </div>
+            </div>
+        </div>
+    </li>
+
+
+err:
+item.user_ = za.text
+AttributeError: 'NoneType' object has no attribute 'text'
