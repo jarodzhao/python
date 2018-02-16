@@ -23,10 +23,25 @@ class Item:
 item = Item
 
 '''
+获取数据库中最新记录的时间戳
+'''
+def get_last_time():
+    last_time = ''
+
+    conn = sqlite3.connect('smzdm.db')
+    sql = 'select time_ from faxian order by time_ desc limit 1'
+    cursor = conn.execute(sql)
+
+    for item in cursor:
+        last_time = item[0]
+
+    return last_time
+
+'''
 分离数据
 传进来的是 li 标签
 '''
-def fetchData(li):
+def fetch_data(li):
     item.id_ = random.random()
 
     #1 div
@@ -109,7 +124,7 @@ def fetchData(li):
     return item
 
 
-def saveData(p, w):
+def save_data(p, w, last_time):
     url = 'https://faxian.smzdm.com/p' + str(p)
     headers = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36'}
 
@@ -120,26 +135,34 @@ def saveData(p, w):
     ul_html = cont.find('ul', id='feed-main-list')
     li_html = ul_html.findAll('li')
 
+    #获取数据库最新记录的时间
+    has_item = False
+
+    #计数器
     s = 0
 
     #开爬 smzdm
     for li in li_html:
-        item = fetchData(li) #分离出商品条目信息
-        inDB(item)
+        item = fetch_data(li) #分离出商品条目信息
 
-        # try:
-        #     inDB(item) #入库
-        # except:
-        #     print('err: %s' % li, end='\n')
+        if last_time == item.time_:
+            has_item = True
+            break
 
-        print('%s | %s\n%s %s %s 评：%s\n%s %s\n%s' % (item.item_type, item.title, item.store, item.price, item.time_, item.comments, item.user_, item.user_url, item.buy_link), 
-            end='\n-\n')
-    print('***************************************** 第 %s 页, 等待 %s 秒... **************************************************' % (p, w))
+        in_dB(item)
 
-'''插入对象到数据上'''
-def inDB(item):
+        print('%s | %s\n%s %s %s | %s 评：%s\n%s %s\n%s\n%s' % (item.item_type, item.title, item.store, item.price, item.time_, last_time, item.comments, item.user_, item.user_url, item.desc, item.buy_link), end='\n-\n')
+
+    print('***************************************** 第 %s 页, 等待 %s 秒继续下一页... **************************************************' % (p, w))
+    
+    if has_item == True:
+        print('已获取到截止上次操作后的所有数据！')
+
+    return has_item
+
+'''插入对象到数据库'''
+def in_dB(item):
     conn = sqlite3.connect('smzdm.db')
-
     cursor = conn.execute('create table if not exists faxian (id_, item_type, title, price, store, time_, url, user_, user_url, desc, zhi, comments, buy_link)')
 
     sql = 'insert into faxian values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
@@ -150,9 +173,25 @@ def inDB(item):
     cursor.close()
     conn.close()
 
-if __name__ == '__main__':
+def get_page_data(last_time):
+    goon = True #继续循环
+
     for i in range(1000):
         w = int(random.random() * 5)
         i += 1
-        saveData(i, w)
+
+        #程序编写错误，02-16 19:42 至 02-17 00:00 时间段有重复记录
+        if save_data(i, w, last_time) == True:
+            goon = False
+            break
+
         time.sleep(w)
+
+    return goon
+
+if __name__ == '__main__':
+    last_time = get_last_time()
+    while get_page_data(last_time) == False:
+        s = 5 + int(random.random() * 10)
+        print('\n暂停 %s 秒后继续...\n' % int(s))
+        time.sleep(s)

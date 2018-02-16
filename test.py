@@ -1,5 +1,5 @@
 import time, random
 
-s = '02-15 14:20'
+s = random.random() * 1000
 
-print(s.)
+print('暂停 %s 秒后继续...' % int(s))
