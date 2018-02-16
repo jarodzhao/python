@@ -38,7 +38,7 @@ def fetchData(li):
     if tag != None:
         item.item_type = tag.text
     else:
-        item.item_type = 'n'
+        item.item_type = 'no'
 
     #2 h5 标题和zdm_url
     h5 = li.find('h5')
@@ -88,7 +88,7 @@ def fetchData(li):
     if time_.find('-') == -1:
         item.time_ = today + time_
     else:
-        item.time = time_
+        item.time_ = time_
 
     #2 div 描述信息
     feed_ver_descripe = li.find('div', class_="feed-ver-descripe")
@@ -138,11 +138,11 @@ def saveData(p, w):
 
 '''插入对象到数据上'''
 def inDB(item):
-    conn = sqlite3.connect('smzdm2.db')
+    conn = sqlite3.connect('smzdm.db')
 
-    cursor = conn.execute('create table if not exists faxian2 (id_, item_type, title, price, store, time_, url, user_, user_url, desc, zhi, comments, buy_link)')
+    cursor = conn.execute('create table if not exists faxian (id_, item_type, title, price, store, time_, url, user_, user_url, desc, zhi, comments, buy_link)')
 
-    sql = 'insert into faxian2 values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    sql = 'insert into faxian values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
 
     cursor.execute(sql, (item.id_, item.item_type, item.title, item.price, item.store, item.time_, item.url, item.user_, item.user_url, item.desc, item.zhi, item.comments, item.buy_link))
     conn.commit()
@@ -151,8 +151,8 @@ def inDB(item):
     conn.close()
 
 if __name__ == '__main__':
-    for i in range(500):
-        w = int(random.random() * 10)
+    for i in range(1000):
+        w = int(random.random() * 5)
         i += 1
         saveData(i, w)
         time.sleep(w)
