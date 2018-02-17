@@ -46,11 +46,11 @@ def get_last_time():
 
 
 if __name__ == '__main__':
-	item.hello = 'aaa'
-	print(item.__repr__)
-	print(item)
 	
-	id_ = uuid.uuid1()
-	print(id_.__repr__())
+	for i in range(10):
+		if i > 5:
+			i += 1
+			break
+		print(i)
 
 	#<img src="https://y.zdmimg.com/201802/17/5a8708aa076625755.jpg_d200.jpg" alt="中华老字号 鹰金钱 豆豉鲮鱼罐头 227g" title="" width="200px" height="200px" style="margin-top:0px">

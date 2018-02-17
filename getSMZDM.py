@@ -25,24 +25,24 @@ item = Item
 '''
 获取数据库中最新记录的时间戳
 '''
-def get_last_time():
-    last_time = ''
+def get_last_title():
+    last_title = ''
 
     conn = sqlite3.connect('smzdm.db')
-    sql = 'select time_ from faxian order by time_ desc limit 1'
+    sql = 'select title from faxian order by id_ desc limit 1'
     cursor = conn.execute(sql)
 
     for item in cursor:
-        last_time = item[0]
+        last_title = item[0]
 
-    return last_time
+    return last_title
 
 '''
 分离数据
 传进来的是 li 标签
 '''
 def fetch_data(li):
-    item.id_ = random.random()
+    item.id_ = time.time()
 
     #1 div
     feed_block_ver = li.find('div', class_='feed-block-ver')
@@ -124,8 +124,8 @@ def fetch_data(li):
     return item
 
 
-def save_data(p, w, last_time):
-    url = 'https://faxian.smzdm.com/p' + str(p)
+def save_data(page, wait, last_title):
+    url = 'https://faxian.smzdm.com/p' + str(page)
     headers = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36'}
 
     r = requests.get(url, headers=headers)
@@ -139,30 +139,30 @@ def save_data(p, w, last_time):
     has_item = False
 
     #计数器
-    s = 0
+    item = []
 
     #开爬 smzdm
     for li in li_html:
         item = fetch_data(li) #分离出商品条目信息
 
-        if last_time == item.time_:
-            has_item = True
-            break
+        # if item.title == last_title:
+        #     has_item = True
+        #     break
 
         in_dB(item)
 
-        print('%s | %s\n%s %s %s | %s 评：%s\n%s %s\n%s\n%s' % (item.item_type, item.title, item.store, item.price, item.time_, last_time, item.comments, item.user_, item.user_url, item.desc, item.buy_link), end='\n-\n')
+        print('%s | %s\n%s %s %s 评：%s\n%s %s\n%s\n%s' % (item.item_type, item.title, item.store, item.price, item.time_, item.comments, item.user_, item.user_url, item.desc, item.buy_link), end='\n-\n')
 
-    print('***************************************** 第 %s 页, 等待 %s 秒继续下一页... **************************************************' % (p, w))
+    print('***************************************** 第 %s 页, 等待 %s 秒继续下一页... **************************************************' % (page, wait))
     
     if has_item == True:
-        print('已获取到截止上次操作后的所有数据！')
+        print('已获取到截止上次操作后的所有数据！\n最后获取记录： %s' % item.title)
 
     return has_item
 
 '''插入对象到数据库'''
 def in_dB(item):
-    conn = sqlite3.connect('smzdm.db')
+    conn = sqlite3.connect('smzdm.db0')
     cursor = conn.execute('create table if not exists faxian (id_, item_type, title, price, store, time_, url, user_, user_url, desc, zhi, comments, buy_link)')
 
     sql = 'insert into faxian values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
@@ -173,25 +173,29 @@ def in_dB(item):
     cursor.close()
     conn.close()
 
-def get_page_data(last_time):
+'''外层循环1'''
+def go_loop_1():
     goon = True #继续循环
 
-    for i in range(1000):
-        w = int(random.random() * 5)
-        i += 1
+    # 这里继续下次循环时应重新获取一下数据库中的时间戳
+    last_title = get_last_title()
+
+    for page in range(1000):
+        wait = int(random.random() * 5)
+        page += 1
 
         #程序编写错误，02-16 19:42 至 02-17 00:00 时间段有重复记录
-        if save_data(i, w, last_time) == True:
-            goon = False
-            break
-
-        time.sleep(w)
+        # if save_data(page, wait, last_title) == True:
+        #     goon = False
+        #     break
+        save_data(page, wait, last_title)
+        time.sleep(wait)
 
     return goon
 
+'''页面执行入口'''
 if __name__ == '__main__':
-    last_time = get_last_time()
-    while get_page_data(last_time) == False:
-        s = 5 + int(random.random() * 10)
-        print('\n暂停 %s 秒后继续...\n' % int(s))
-        time.sleep(s)
+    while go_loop_1() == False:
+        wait2 = 20 + int(random.random() * 30)
+        print('\n暂停 %s 秒后继续...\n' % int(wait2))
+        time.sleep(wait2)
