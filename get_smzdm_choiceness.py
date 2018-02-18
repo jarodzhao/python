@@ -1,15 +1,18 @@
 from smzdm.faxian import FaxianItem as Item
 import sqlite3
+import time, random
+import bs4
 
+def test():
+	for i in range(5):
+		if i > 2:
+			print('aaaaa')
+			return i
+			break
+		print(str(i) + '...')
+	print(str(i) + '---')
 
-def b(i):
-	t = a()
-	return t + i
-
-def a():
-	t = 1
-	return t
 
 if __name__ == '__main__':
-	print(b(5))
-
+	a = True
+	print(test())
