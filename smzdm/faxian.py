@@ -21,14 +21,9 @@ class FaxianItem():
         self.zhi = zhi
         self.comments = comments
         self.buy_link = buy_link
+        # 如果才能使单独赋值属性时，也自动加上日期？？
         if time.find('-') == -1:
             today = time.strftime('%m-%d ', time.localtime())
             self.time_ = today + time
         else:
             self.time_ = time
-
-
-if __name__ == '__main__':
-    item = FaxianItem('a', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b')
-    item.is_today()
-

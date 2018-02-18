@@ -1,5 +1,5 @@
 import random
-import time
+import time, datetime
 import sqlite3
 import requests
 from smzdm.faxian import FaxianItem as Item
@@ -28,7 +28,7 @@ def get_html(page):
 因为 time_ 值都相同，所以保存一条即可
 '''
 def get_last_data():
-    conn = sqlite3.connect('smzdm_test.db')
+    conn = sqlite3.connect('smzdm.db')
     cursor = conn.cursor()
 
     global last_data
@@ -36,15 +36,20 @@ def get_last_data():
 
     #除非是空数据库，否则一定会返回记录集
     sql = 'SELECT time_, url FROM faxian WHERE time_ = (SELECT time_ FROM faxian ORDER BY id_ LIMIT 1)'
-    rs = cursor.execute(sql)
+    
+    try:
+        rs = cursor.execute(sql)
+        for row in rs:
+            urls.append(row[1])
 
-    for row in rs:
-        urls.append(row[1])
-
-    # 需要把 02-17 18:34 这样的时间转换一下 --------------------------
-    last_data = [row[0], urls]
-
-    conn.close()
+        # 需要把 02-17 18:34 这样的时间转换一下
+        last_data = [get_time_stamp(row[0]), urls]
+    except UnboundLocalError:
+        last_data = [time.time(), '']
+    except sqlite3.OperationalError:
+        last_data = [time.time(), '']
+    finally:
+        conn.close()
 
     return last_data
 
@@ -52,16 +57,27 @@ def get_last_data():
 根据 item.title 判断库中是否已有该记录
 '''
 def has_item(item):
-    conn = sqlite3.connect('smzdm_test.db')
+    conn = sqlite3.connect('smzdm.db')
     cursor = conn.cursor()
 
     sql = "select * from faxian where title = ?"
-    result = cursor.execute(sql, (item.title)).fetchall()   #一个坑，不调用 fetchall() 方法，返回的数量始终为 -1
+    try:
+        result = cursor.execute(sql, (item.title,)).fetchall()      #坑一，使用占位符，记得在值后面加 ,
+        if len(result) > 0:                                         #坑二，不调用 fetchall() 方法，返回的数量始终为 -1
+            return True
+    except:
+        pass    #首次运行时会引发异常，找不到表（刚刚建的库，没有表！）
+    finally:
+        conn.close()
 
-    if len(result) > 0:
-        return True
-    else:
-        return False
+    return False
+
+'''根据数据库中日期字符串生成格式化后的日期和时间
+格式：2018-02-19 2:26:00
+'''
+def get_time_stamp(str_time):
+    timer = str(datetime.datetime.now().year) + '-' + str_time + ':00'
+    return time.mktime(time.strptime(timer, '%Y-%m-%d %H:%M:%S'))
 
 #======================
 # 页面开始，向下顺序执行
@@ -75,11 +91,11 @@ def go_loop():
         #库中最晚时间戳的对象列表
         last_data = get_last_data()
         #等待几秒后继续下一页
-        wait = int(random.random() * 5)
+        wait = int(random.random() * 10) + 5
         page += 1
 
         # goon 的返回值问题？！！
-        if fetch_data(page, wait, last_data):
+        if not fetch_data(page, wait, last_data):
             '''
             如果抓取到的记录库中已有，并且有特殊标记的记录
             没有特殊标记的，视为本次抓取中的重复记录，自动忽略
@@ -98,7 +114,6 @@ def go_loop():
 '''
 def fetch_data(page, wait, last_data):
     html = get_html(page)
-    item = Item   #每次循环开始，必须实例化一个新对象。-----------------------------------测试时，试一下看不能取消这一句
     
     #开始抓取 smzdm.faxiam
     for li in html:
@@ -121,6 +136,8 @@ def fetch_data(page, wait, last_data):
         2.重新启动后（停止后的重启），该值为数据库中的最新时间戳
         last_data 保存的时间戳为全局变量，所以该列表不能重新赋值，只能更新内容！！
         '''
+
+        #如果手工开始的抓取，从库里获取到时间又较新，会出现不能正常显示头条标识 item.first=0
         if time.time() - last_data[0] > item.next_time:
             #print('头条记录...\n')
             item.first = 1      #本次抓取的头条记录
@@ -152,7 +169,7 @@ def fetch_data(page, wait, last_data):
                 重复了？！忽略！
         '''
 
-        if item.first = 1:
+        if item.first == 1:
             if not db_has_item:
                 in_db(item)
             else:
@@ -236,7 +253,12 @@ def fetch_item(html):
     for tag in feed_ver_row_r:  #这里会有两个 feed-ver-row-r，不包含 feed-link-btn 属性的标签即为时间
         if tag.find('div', class_='feed-link-btn') == None:
             time_ = tag.text
-    item.time_ = time_
+    # item.time_ = time_
+    if time_.find('-') == -1:
+        today = time.strftime('%m-%d ', time.localtime())
+        item.time_ = today + time_
+    else:
+        item.time_ = time_
 
     #2 div 描述信息
     feed_ver_descripe = html.find('div', class_="feed-ver-descripe")
