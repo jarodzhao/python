@@ -281,7 +281,7 @@ def in_db(item):
 页面执行入口
 '''
 if __name__ == '__main__':
+    item = Item
     while go_loop() == False:
-        wait2 = 30 + int(random.random() * 20)
-        print('\n暂停 %s 秒后重新开始...\n' % int(wait2))
-        time.sleep(wait2)
+        print('\n暂停 %s 秒后重新开始...\n' % int(item.next_time))
+        time.sleep(item.next_time)
