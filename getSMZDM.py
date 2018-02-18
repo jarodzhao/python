@@ -6,7 +6,7 @@ from smzdm.faxian import FaxianItem as Item
 from bs4 import BeautifulSoup as bsp
 
 last_data = []
-
+at_first = True
 '''
 抓取 HTML 源方法
 '''
@@ -110,7 +110,6 @@ def go_loop():
 
 '''
 分离业务的逻辑过程
-需要返回什么值？ ----------------------------
 '''
 def fetch_data(page, wait, last_data):
     html = get_html(page)
@@ -136,9 +135,9 @@ def fetch_data(page, wait, last_data):
         2.重新启动后（停止后的重启），该值为数据库中的最新时间戳
         last_data 保存的时间戳为全局变量，所以该列表不能重新赋值，只能更新内容！！
         '''
-
-        #如果手工开始的抓取，从库里获取到时间又较新，会出现不能正常显示头条标识 item.first=0
-        if time.time() - last_data[0] > item.next_time:
+        # 头条记录标识
+        global at_first
+        if at_first:
             #print('头条记录...\n')
             item.first = 1      #本次抓取的头条记录
         else:
@@ -169,11 +168,17 @@ def fetch_data(page, wait, last_data):
                 重复了？！忽略！
         '''
 
+        # print('at_first=%s  db_has_item=%s' % (at_first, db_has_item))
+
         if item.first == 1:
             if not db_has_item:
                 in_db(item)
+                #增加提示
+                print('%s | %s\n%s %s %s 评：%s\n%s %s\n%s\n%s' % (item.item_type, item.title, item.store, item.price, item.time_, 
+                    item.comments, item.user_, item.user_url, item.desc, item.buy_link), end='\n-\n')
             else:
-                print('已获取到截止上次操作后的所有数据！\n最后获取记录： %s' % item.title)
+                timer = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+                print('已获取到截止上次操作后的所有数据！\n最后获取记录： %s at %s' % (item.title, timer))
                 return False
                 break   #跳出循环
         else:
@@ -181,9 +186,13 @@ def fetch_data(page, wait, last_data):
                 in_db(item)
                 print('%s | %s\n%s %s %s 评：%s\n%s %s\n%s\n%s' % (item.item_type, item.title, item.store, item.price, item.time_, 
                     item.comments, item.user_, item.user_url, item.desc, item.buy_link), end='\n-\n')
+            elif db_has_item:
+                timer = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+                print('已获取到截止上次操作后的所有数据！\n最后获取记录： %s - %s' % (item.title, timer))
+                return False
+                break   #跳出循环
             else:
-                pass
-                print('%s | %s\n%s %s %s 评：%s\n%s %s\n%s\n%s\n-------------本条已忽略!!!-------------' % (item.item_type, item.title,
+                print('%s | %s\n%s %s %s 评：%s\n%s %s\n%s\n%s\n-------------该条已存在，自动忽略!!!-------------' % (item.item_type, item.title,
                     item.store, item.price, item.time_, item.comments, item.user_, item.user_url, item.desc, item.buy_link), end='\n-\n')
 
         # 入库后需要返回两个结果：
@@ -192,7 +201,7 @@ def fetch_data(page, wait, last_data):
         # 写库操作只返回一个 boolean 为 True 的值，写库过程中更新最后写库时间到全局变量 last_data 中
 
     # 页面抓取完成，等候 x 秒后继续...
-    print('***************************************** 第 %s 页, 等待 %s 秒继续下一页... **************************************************' % (page, wait))
+    print('***************************************** 第 %s 页, 等待 %s 秒继续下一页... **************************************************\n' % (page, wait))
     return True
     
 
@@ -290,6 +299,9 @@ def in_db(item):
     cursor.execute(sql, (item.id_, item.first, item.item_type, item.title, item.price, item.store, item.time_, item.url, item.user_, item.user_url, item.desc, 
         item.zhi, item.comments, item.buy_link))
 
+    global at_first
+    at_first = False
+
     conn.commit()
     conn.close()
 
@@ -307,3 +319,5 @@ if __name__ == '__main__':
     while go_loop() == False:
         print('\n暂停 %s 秒后重新开始...\n' % int(item.next_time))
         time.sleep(item.next_time)
+
+        at_first = True

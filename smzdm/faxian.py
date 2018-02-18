@@ -2,9 +2,7 @@ import time
 
 class FaxianItem():
 
-    '''
-    抓取间隔时间
-    '''
+    # 抓取间隔时间
     next_time = 30
 
     def __init__(self, id_, first, item_type, title, price, store, time, url, user, user_url, desc, zhi, comments, buy_link):
