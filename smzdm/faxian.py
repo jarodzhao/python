@@ -1,6 +1,6 @@
 import time, random
 
-class FaxianItem():
+class FaxianItem:
 
     # 抓取间隔时间
     next_time = 1800 + int(random.random() * 1000)

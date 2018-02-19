@@ -293,8 +293,8 @@ def fetch_item(html):
             item.user_ = feed_ver_row_l.text.strip()
             item.user_url = 'b#'
     else:
-        item.user_ = '广告时间'   #根本没有用户信息
-        item.user_url = '广告信息，无用户信息'
+        item.user_ = '商家自荐'   #根本没有用户信息
+        item.user_url = '无用户信息'
 
     feed_ver_row_r = html.find_all(class_='feed-ver-row-r')
 
