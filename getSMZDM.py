@@ -350,9 +350,7 @@ def in_db(item):
 
     return True
 
-'''
-页面执行入口
-'''
+
 if __name__ == '__main__':
     item = Item
     while go_loop() == False:
