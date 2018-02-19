@@ -1,9 +1,9 @@
-import time
+import time, random
 
 class FaxianItem():
 
     # 抓取间隔时间
-    next_time = 30
+    next_time = 1800 + int(random.random() * 1000)
 
     def __init__(self, id_, first, item_type, title, price, store, time, url, user, user_url, desc, zhi, comments, buy_link):
         self.id_ = id_

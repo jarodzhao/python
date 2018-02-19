@@ -60,19 +60,24 @@ def has_item(item):
     conn = sqlite3.connect('smzdm.db')
     cursor = conn.cursor()
 
-    sql = "select * from faxian where title = ?"
+    sql = "select first from faxian where title = ?"
     try:
-        result = cursor.execute(sql, (item.title,)).fetchall()      #坑一，使用占位符，记得在值后面加 ,
-        if len(result) > 0:                                         #坑二，不调用 fetchall() 方法，返回的数量始终为 -1
-            return True
+        result = cursor.execute(sql, (item.title,)).fetchall()          #坑一，使用占位符，记得在值后面加 ,
+        if len(result) > 0 and result[0][0] == 1:                       #坑二，不调用 fetchall() 方法，返回的数量始终为 -1
+            return 2
+        elif len(result) > 0:
+            return 1
+        else:
+            return 0
     except:
         pass    #首次运行时会引发异常，找不到表（刚刚建的库，没有表！）
     finally:
         conn.close()
 
-    return False
+    return 0
 
-'''根据数据库中日期字符串生成格式化后的日期和时间
+'''
+根据数据库中日期字符串生成格式化后的日期和时间
 格式：2018-02-19 2:26:00
 '''
 def get_time_stamp(str_time):
@@ -166,34 +171,68 @@ def fetch_data(page, wait, last_data):
                 写入库中
             else 库中有
                 重复了？！忽略！
+
+
+        if 头条记录 and 库中有:
+            以获取所有信息，暂停
+        elif 头条记录 and 库中无：
+            入库，并提示
+        elif 非头条 and 库中有：
+            已存在，忽略
+        elif 非头条 and 库中无:
+            入库，并提示
+        else:
+            有无其他情况?
+
+        ========================
+        if 库中无：
+            入库，并提示
+        else:
+            if 头条记录：
+                已抓取所有
+            elif 非头条:
+                已存在，忽略
+        ========================
         '''
 
-        # print('at_first=%s  db_has_item=%s' % (at_first, db_has_item))
+        print('at_first=%s  db_has_item=%s\n' % (at_first, db_has_item))
 
-        if item.first == 1:
-            if not db_has_item:
-                in_db(item)
-                #增加提示
-                print('%s | %s\n%s %s %s 评：%s\n%s %s\n%s\n%s' % (item.item_type, item.title, item.store, item.price, item.time_, 
-                    item.comments, item.user_, item.user_url, item.desc, item.buy_link), end='\n-\n')
-            else:
-                timer = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
-                print('已获取到截止上次操作后的所有数据！\n最后获取记录： %s at %s' % (item.title, timer))
-                return False
-                break   #跳出循环
+        if db_has_item == 0:
+            in_db(item)
+            #增加提示
+            print('%s | %s\n%s %s %s 评：%s\n%s %s\n%s\n%s' % (item.item_type, item.title, item.store, item.price, item.time_, item.comments, 
+            item.user_, item.user_url, item.desc, item.buy_link), end='\n --- \n\n')
         else:
-            if not db_has_item:
-                in_db(item)
-                print('%s | %s\n%s %s %s 评：%s\n%s %s\n%s\n%s' % (item.item_type, item.title, item.store, item.price, item.time_, 
-                    item.comments, item.user_, item.user_url, item.desc, item.buy_link), end='\n-\n')
-            elif db_has_item:
+            if db_has_item == 2:
                 timer = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
-                print('已获取到截止上次操作后的所有数据！\n最后获取记录： %s - %s' % (item.title, timer))
+                print('已获取到截止上次操作后的所有数据！\n最后获取记录：\n%s at [%s]' % (item.title, timer))
                 return False
                 break   #跳出循环
             else:
-                print('%s | %s\n%s %s %s 评：%s\n%s %s\n%s\n%s\n-------------该条已存在，自动忽略!!!-------------' % (item.item_type, item.title,
-                    item.store, item.price, item.time_, item.comments, item.user_, item.user_url, item.desc, item.buy_link), end='\n-\n')
+                print('%s | %s\n%s %s %s 评：%s\n%s %s\n%s\n%s\n-------------该条已存在，自动忽略!!!-------------' % (item.item_type,
+                 item.title, item.store, item.price, item.time_, item.comments, item.user_, item.user_url, item.desc, item.buy_link), end='\n-\n')
+
+
+        # if item.first == 1:
+        #     if not db_has_item:
+        #     else:
+        #         timer = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+        #         print('已获取到截止上次操作后的所有数据！\n最后获取记录：\n%s at [%s]' % (item.title, timer))
+        #         return False
+        #         break   #跳出循环
+        # else:
+        #     if not db_has_item:
+        #         in_db(item)
+        #         print('%s | %s\n%s %s %s 评：%s\n%s %s\n%s\n%s' % (item.item_type, item.title, item.store, item.price, item.time_, 
+        #             item.comments, item.user_, item.user_url, item.desc, item.buy_link), end='\n-\n')
+        #     elif db_has_item:   #翻页后，出现判断错误！
+        #         timer = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+        #         print('已获取到截止上次操作后的所有数据！\n最后获取记录：\n%s - %s' % (item.title, timer))
+        #         return False
+        #         break   #跳出循环
+        #     else:
+        #         print('%s | %s\n%s %s %s 评：%s\n%s %s\n%s\n%s\n-------------该条已存在，自动忽略!!!-------------' % (item.item_type, item.title,
+        #             item.store, item.price, item.time_, item.comments, item.user_, item.user_url, item.desc, item.buy_link), end='\n-\n')
 
         # 入库后需要返回两个结果：
         # 1.入库标识，记录是否写入库中 
