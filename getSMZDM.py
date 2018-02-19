@@ -18,7 +18,7 @@ def get_html(page):
     content = bsp(r.text, 'html.parser')
 
     ul_html = content.find('ul', id='feed-main-list')
-    li_html = ul_html.findAll('li')    
+    li_html = ul_html.findAll('li')
 
     return li_html
 
@@ -60,12 +60,12 @@ def has_item(item):
     conn = sqlite3.connect('smzdm.db')
     cursor = conn.cursor()
 
-    sql = "select first from faxian where title = ?"
+    sql = "select first from faxian where url = ?"
     try:
-        result = cursor.execute(sql, (item.title,)).fetchall()          #坑一，使用占位符，记得在值后面加 ,
+        result = cursor.execute(sql, (item.url,)).fetchall()          #坑一，使用占位符，记得在值后面加 ,
         if len(result) > 0 and result[0][0] == 1:                       #坑二，不调用 fetchall() 方法，返回的数量始终为 -1
             return 2
-        elif len(result) > 0:
+        elif len(result) > 0:                                           #坑三，翻页后，前页的记录出现在本页 = 1 的记录都被作为重复记录忽略了！！
             return 1
         else:
             return 0
@@ -208,8 +208,8 @@ def fetch_data(page, wait, last_data):
                 print('已获取到截止上次操作后的所有数据！\n最后获取记录：\n%s at [%s]' % (item.title, timer))
                 return False
                 break   #跳出循环
-            else:
-                print('%s | %s\n%s %s %s 评：%s\n%s %s\n%s\n%s\n-------------该条已存在，自动忽略!!!-------------' % (item.item_type,
+            else:   #---------------------------------------------- 判断仍有问题，遗漏很多记录--------被作为已存在处理，复查后发现没有遗漏~
+                print('%s | %s\n%s %s %s 评：%s\n%s %s\n%s\n%s\n-------------该条目已存在，自动忽略!!!-------------' % (item.item_type,
                  item.title, item.store, item.price, item.time_, item.comments, item.user_, item.user_url, item.desc, item.buy_link), end='\n-\n')
 
 
