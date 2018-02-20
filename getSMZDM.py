@@ -2,8 +2,9 @@ import random
 import time, datetime
 import sqlite3
 import requests
-from smzdm.faxian import FaxianItem as Item
 from bs4 import BeautifulSoup as bsp
+from smzdm.faxian import FaxianItem as Item
+from get_faxian_comments import get_comment
 
 last_data = []
 at_first = True
@@ -18,7 +19,7 @@ def get_html(page):
     content = bsp(r.text, 'html.parser')
 
     ul_html = content.find('ul', id='feed-main-list')
-    li_html = ul_html.findAll('li')
+    li_html = ul_html.find_all('li')
 
     return li_html
 
@@ -202,6 +203,7 @@ def fetch_data(page, wait, last_data):
             #增加提示
             print('%s | %s\n%s %s %s 评：%s\n%s %s\n%s\n%s' % (item.item_type, item.title, item.store, item.price, item.time_, item.comments, 
             item.user_, item.user_url, item.desc, item.buy_link), end='\n --- \n\n')
+            get_comment(item.url)
         else:
             if db_has_item == 2:
                 timer = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
