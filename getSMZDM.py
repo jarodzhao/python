@@ -196,13 +196,13 @@ def fetch_data(page, wait, last_data):
         ========================
         '''
 
-        print('at_first=%s  db_has_item=%s\n' % (at_first, db_has_item))
+        #print('at_first=%s  db_has_item=%s\n' % (at_first, db_has_item))
 
         if db_has_item == 0:
             in_db(item)
             #增加提示
             print('%s | %s\n%s %s %s 评：%s\n%s %s\n%s\n%s' % (item.item_type, item.title, item.store, item.price, item.time_, item.comments, 
-            item.user_, item.user_url, item.desc, item.buy_link), end='\n --- \n\n')
+            item.user_, item.user_url, item.desc, item.url), end='\n --- \n\n')
             get_comment(item.url)
         else:
             if db_has_item == 2:
@@ -212,7 +212,7 @@ def fetch_data(page, wait, last_data):
                 break   #跳出循环
             else:   #---------------------------------------------- 判断仍有问题，遗漏很多记录--------被作为已存在处理，复查后发现没有遗漏~
                 print('%s | %s\n%s %s %s 评：%s\n%s %s\n%s\n%s\n-------------该条目已存在，自动忽略!!!-------------' % (item.item_type,
-                 item.title, item.store, item.price, item.time_, item.comments, item.user_, item.user_url, item.desc, item.buy_link), end='\n-\n')
+                 item.title, item.store, item.price, item.time_, item.comments, item.user_, item.user_url, item.desc, item.url), end='\n-\n')
 
 
         # if item.first == 1:

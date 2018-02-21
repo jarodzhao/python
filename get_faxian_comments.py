@@ -173,7 +173,7 @@ def get_comment(url):
 if __name__ == '__main__':
 	# url = 'https://www.smzdm.com/p/8739792/'
 	# url = 'https://www.smzdm.com/p/8734364/'
-	url = 'https://www.smzdm.com/p/8734187/'
+	url = 'https://www.smzdm.com/p/8740743/'
 	# url = 'https://www.smzdm.com/p/8732787/'
 	get_comment(url)
 
