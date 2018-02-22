@@ -5,6 +5,7 @@ import requests
 from bs4 import BeautifulSoup as bsp
 from smzdm.faxian import FaxianItem as Item
 from get_faxian_comments import get_comment
+from smzdm.fetch_faxian_ext import *
 
 last_data = []
 at_first = True
@@ -200,6 +201,7 @@ def fetch_data(page, wait, last_data):
 
         if db_has_item == 0:
             in_db(item)
+            fetch_ext(item.ext)
             #增加提示
             print('%s | %s\n%s %s %s 评：%s\n%s %s\n%s\n%s' % (item.item_type, item.title, item.store, item.price, item.time_, item.comments, 
             item.user_, item.user_url, item.desc, item.url), end='\n --- \n\n')
@@ -321,9 +323,12 @@ def fetch_item(html):
     comments = html.find('i', class_='z-icon-comment')
     item.comments = comments.find_parent().text
 
-    #  购买链接
+    # 购买链接
     link = html.find('div', class_='feed-link-btn').find('a')
     item.buy_link = link['href']
+
+    # 扩展信息
+    item.ext = link['onclick']
 
     return item
 

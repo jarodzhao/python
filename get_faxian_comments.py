@@ -72,22 +72,24 @@ def fetch_data(html):
 
 			if quote_html != None:
 				quote_s_html = quote_html.find_all('blockquote', class_='comment_blockquote') 
+
 				for i in quote_s_html:
-					quote.append(i.find('div', class_='comment_floor').text)	# floor 引用的楼层
+					# floor 引用的楼层编号
+					quote.append(i.find('div', class_='comment_floor').text) #提取引用的评论编号
+
 				if len(quote) > 0:
 					quote_ = ','.join(str(n) for n in quote)
 
-			# 评论内容
-			content_html = li.find('div', class_='comment_conBox')
-
-			# 引用评论标签
-			blockquote_html = content_html.find('div', class_='blockquote_wrap')
-
-			if blockquote_html == None:
-				content = content_html.find('div', class_='comment_conWrap').find('span').text
-			else:
-				# 有引用评论
-				content = blockquote_html.next_sibling.next_sibling.find('span').text
+			# 评论内容主体
+			# content_html = li.find('div', class_='comment_conBox')
+			# blockquote_html = content_html.find('div', class_='blockquote_wrap')
+			# if blockquote_html == None:
+			# 	content = content_html.find('div', class_='comment_conWrap').find('span').text
+			# else:
+			# 	# 有引用评论
+			# 	content = blockquote_html.next_sibling.next_sibling.find('span').text
+			content_html = li.find_all('span', itemprop="description")
+			content = content_html[len(content_html)-1].text
 
 			# 顶，踩，终端类型
 			comment_action_html = li.find('div', class_='comment_conWrap').find('div', class_='comment_action')
@@ -103,7 +105,8 @@ def fetch_data(html):
 			id_ = time.time()
 
 			# 生成评论列表
-			comment = Comment(id_, floor, user_, user_level, user_url, time_, quote_, content, platform, item_url, ding, cai)
+			comment = Comment(id_, floor, user_, user_level, user_url, time_, quote_, 
+				content, platform, item_url, ding, cai)
 			comments.append(comment)
 
 		return (page_count, comments)
