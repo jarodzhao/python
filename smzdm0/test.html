@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="http://cdn.static.runoob.com/libs/jquery/2.0.0/jquery.min.js"></script>
+</head>
+<body>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			console.log($("input[name='sex']").get(0))
+			$("input[name='sex']").get(0).checked=true;
+		})
+	</script>
+
+	<form>
+		<input type="radio" name="sex" value="1">Male<br>
+		<input type="radio" name="sex" value="0">Female<br>
+	</form>
+</body>
+</html>
