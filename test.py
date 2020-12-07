@@ -1,14 +1,16 @@
-from bs4 import BeautifulSoup as bsp
-
-fo = open('li.html', 'r', encoding='UTF-8')
-all = fo.read()
-
-html = bsp(all, 'html.parser')
-li = html.find_all('li', class_='comment_list')
-
-for comm in li:
-	st = comm.find_all('span', itemprop="description")
-	print(st[len(st)-1].text)
-	print()
+import fileUtils as fu
 
 
+def get_list():
+    ext = []
+    path = "/storage/emulated/0/1"
+    _list=fu.get_file_list_by_ext(path, ext)
+    for f in _list:
+        print(f, "\n", _list[f], "\n")
+
+
+if __name__=="__main__":
+    get_list()
+
+    #count=fu.type_count_in_file_list(files)
+    #print(count)
